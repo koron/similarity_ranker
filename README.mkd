@@ -1,0 +1,31 @@
+# Abstract
+
+Redis + Lua を使って、アイテム類似度の高いものを上位からリストアップする、
+コンセプトスクリプトです。
+
+アイテムの特徴はビットパターンで表現します。
+
+アイテム同士の類似度は2つのアイテムのビットパターンをそれぞれA,Bとすると:
+
+    BITCOUNT(A & B)
+
+で与えられるものとします。
+
+## Setup
+
+    $ ./setup-data01.sh
+
+としてサンプルデータを Redis に読み込んでください。このスクリプトは redis-cli
+を用いて item\_0000 から item\_0031 までのアイテムを作成します。
+
+## Execute
+
+    $ redis-cli --eval ranker.lua {pivot_key} {tmp_key} , {key_prefix} {count}
+
+pivot\_key に似たアイテムを key\_prefix で始まるキーのアイテムから探し出し、上
+位 count 件のキーを返します。その際にワーキングエリアとしてキー tmp\_key を用い
+ます。
+
+実行例その1:
+
+    $ redis-cli --eval ranker.lua item_0000 tmpkey , item_ 5
