@@ -13,12 +13,14 @@ Redis + Lua を使って、アイテム類似度の高いものを上位から�
 
 ## Setup
 
-    $ ./setup-data01.sh
+    $ ./setup-data02.sh
 
 としてサンプルデータを Redis に読み込んでください。このスクリプトは redis-cli
 を用いて item\_0000 から item\_0031 までのアイテムを作成します。
 
 ## Execute
+
+### ranker.lua
 
     $ redis-cli --eval ranker.lua {pivot_key} {tmp_key} , {key_prefix} {count}
 
@@ -29,3 +31,18 @@ pivot\_key に似たアイテムを key\_prefix で始まるキーのアイテ�
 実行例その1:
 
     $ redis-cli --eval ranker.lua item_0000 tmpkey , item_ 5
+
+### ranker2.lua
+
+    $ redis-cli --eval ranker2.lua {pivot_key} {keys_key} \
+      {tmp_key1} {tmp_key2} , {count}
+
+  * pivot\_key : 基準となる値が格納されたキー
+  * keys\_key : 比較対象となる値が格納されたキーのリストが格納されたキー
+  * tmp\_key1 : 得点計算のワークエリアとなるキー その1
+  * tmp\_key2 : 得点計算のワークエリアとなるキー その2
+  * count : とりだす件数
+
+実行例その1:
+
+    $ redis-cli --eval ranker2.lua item_0000 item_keys tmp1 tmp2 , 5
