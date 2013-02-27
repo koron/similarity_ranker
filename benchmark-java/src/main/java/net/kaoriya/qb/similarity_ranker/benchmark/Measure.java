@@ -11,7 +11,8 @@ public abstract class Measure
 
     public final void run() throws Exception
     {
-        System.out.format("%1$s [start]\n", this.name);
+        System.out.format("%1$s [start]", this.name);
+        System.out.println();
         long start = System.nanoTime();
         try {
             execute();
@@ -19,8 +20,9 @@ public abstract class Measure
             throw e;
         } finally {
             long duration = System.nanoTime() - start;
-            System.out.format("%1$s [end in %2$.9f sec]\n", this.name,
+            System.out.format("%1$s [end in %2$.9f sec]", this.name,
                     duration / 1.0e9);
+            System.out.println();
         }
     }
 
