@@ -61,14 +61,18 @@ public class Main
     public static void benchmark(
             String name,
             String host,
-            int size,
-            int count)
+            final int size,
+            final int count)
         throws Exception
     {
         JedisPool pool = new JedisPool(new JedisPoolConfig(), host);
-        Jedis jedis = pool.getResource();
+        final Jedis jedis = pool.getResource();
         try {
-            setupData(jedis, size, count, KEYS_KEY);
+            new Measure("setupData") {
+                protected void execute() throws Exception {
+                    setupData(jedis, size, count, KEYS_KEY);
+                }
+            }.run();
             Set<String> keys = jedis.keys("*");
         } finally {
             pool.returnResource(jedis);
