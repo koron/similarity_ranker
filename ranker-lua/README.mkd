@@ -1,0 +1,69 @@
+# Abstract
+
+Redis + Lua を使って、アイテム類似度の高いものを上位からリストアップする、
+コンセプトスクリプトです。
+
+アイテムの特徴はビットパターンで表現します。
+
+アイテム同士の類似度は2つのアイテムのビットパターンをそれぞれA,Bとすると:
+
+    BITCOUNT(A & B)
+
+で与えられるものとします。
+
+## Setup
+
+    $ ./setup-data02.sh
+
+としてサンプルデータを Redis に読み込んでください。このスクリプトは redis-cli
+を用いて item\_0000 から item\_0031 までのアイテムを作成します。
+
+## Execute
+
+### ranker.lua
+
+    $ redis-cli --eval ranker.lua {pivot_key} {tmp_key} , {key_prefix} {count}
+
+pivot\_key に似たアイテムを key\_prefix で始まるキーのアイテムから探し出し、上
+位 count 件のキーを返します。その際にワーキングエリアとしてキー tmp\_key を用い
+ます。
+
+実行例その1:
+
+    $ redis-cli --eval ranker.lua item_0000 tmpkey , item_ 5
+
+### ranker2.lua
+
+    $ redis-cli --eval ranker2.lua {pivot_key} {keys_key} \
+      {tmp_key1} {tmp_key2} , {count}
+
+  * pivot\_key : 基準となる値が格納されたキー
+  * keys\_key : 比較対象となる値が格納されたキーのリストが格納されたキー
+  * tmp\_key1 : 得点計算のワークエリアとなるキー その1
+  * tmp\_key2 : 得点計算のワークエリアとなるキー その2
+  * count : とりだす件数
+
+実行例その1:
+
+    $ redis-cli --eval ranker2.lua item_0000 item_keys tmp1 tmp2 , 5
+
+### ranker3.lua
+
+スコア計算に
+
+  count(a and b) / count(a or b)
+
+を使い、結果の Sorted Set を保持するバージョン。
+
+    $ redis-cli --eval ranker3.lua {pivot_key} {keys_key} \
+      {score_key} {tmp_key} , {count}
+
+  * pivot\_key : 基準となる値が格納されたキー
+  * keys\_key : 比較対象となる値が格納されたキーのリストが格納されたキー
+  * score\_key : ランキング結果を出力する Sorted Set が格納されたキー
+  * tmp\_key : 得点計算のワークエリアとなるキー
+  * count : とりだす件数
+
+実行例その1:
+
+    $ redis-cli --eval ranker3.lua item_0000 item_keys score tmp , 5
