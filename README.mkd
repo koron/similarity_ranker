@@ -46,3 +46,24 @@ pivot\_key に似たアイテムを key\_prefix で始まるキーのアイテ�
 実行例その1:
 
     $ redis-cli --eval ranker2.lua item_0000 item_keys tmp1 tmp2 , 5
+
+### ranker3.lua
+
+スコア計算に
+
+  count(a and b) / count(a or b)
+
+を使い、結果の Sorted Set を保持するバージョン。
+
+    $ redis-cli --eval ranker3.lua {pivot_key} {keys_key} \
+      {score_key} {tmp_key} , {count}
+
+  * pivot\_key : 基準となる値が格納されたキー
+  * keys\_key : 比較対象となる値が格納されたキーのリストが格納されたキー
+  * score\_key : ランキング結果を出力する Sorted Set が格納されたキー
+  * tmp\_key : 得点計算のワークエリアとなるキー
+  * count : とりだす件数
+
+実行例その1:
+
+    $ redis-cli --eval ranker3.lua item_0000 item_keys score tmp , 5
