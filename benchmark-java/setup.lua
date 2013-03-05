@@ -6,11 +6,10 @@ end
 
 local function generate_value(n, len)
     local buffer = {}
-    local i = 0
     for i = 1, len do
-        table.insert(buffer, string.char(math.random(0, 255)))
+        table.insert(buffer, math.random(0, 255))
     end
-    return table.concat(buffer)
+    return string.char(unpack(buffer))
 end
 
 local function data_setup(len, num)
