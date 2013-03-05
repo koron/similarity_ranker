@@ -51,4 +51,4 @@ local function ranking3(pivot_key, keys_key, score_key, tmp_key, limit, offset)
     return retval
 end
 
-return ranking3(KEYS[1], KEYS[2], KEYS[3], KEYS[4], ARGV[1], 100)
+return ranking3(KEYS[1], KEYS[2], KEYS[3], KEYS[4], ARGV[1], 5000)
