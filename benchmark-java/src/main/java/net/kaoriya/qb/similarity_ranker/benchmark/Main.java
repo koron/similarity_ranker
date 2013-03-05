@@ -53,7 +53,7 @@ public class Main
         {
             String key = generateKey(PREFIX, i);
             byte[] value = generateValue(r, size);
-            setBits(jedis, key, value);
+            //setBits(jedis, key, value);
             jedis.lpush(keysKey, key);
         }
     }

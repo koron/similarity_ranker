@@ -1,0 +1,11 @@
+Setup data.
+
+    $ redis-cli --eval setup.lua
+
+Compile and run.
+
+    $ gradle runMain
+
+Compile only.
+
+    $ gradle
