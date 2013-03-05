@@ -13,10 +13,9 @@ local function generate_value(n, len)
     return table.concat(buffer)
 end
 
-local function data_setup(num, len)
-    math.randomseed(os.time())
+local function data_setup(len, num)
+    --math.randomseed(os.time())
     local count = 0
-    local i = 0
     for i = 0, num - 1 do
         redis.call('SET', generate_key(i), generate_value(i, len))
         count = count + 1
@@ -24,4 +23,4 @@ local function data_setup(num, len)
     return count
 end
 
-return data_setup(10)
+return data_setup(ARGV[1], ARGV[2])
