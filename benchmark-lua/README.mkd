@@ -1,0 +1,43 @@
+# Benchmark by only Lua.
+
+## Setup items
+
+    $ redis-cli --eval setup_items.lua {item size} {item number}
+
+* `item size`: length in bytes of item value.
+* `item number`: item number to create.
+
+Example:
+
+    $ redis-cli --eval setup_items.lua 64 1000000
+
+## Choose targets
+
+    $ redis-cli --eval choose_targets.lua {start} {count}
+
+* `start`: start number of targets.
+* `count`: count of targets.
+
+Example:
+
+    $ redis-cli --eval choose_targets.lua 0 100000
+
+## Run similarity ranking and measure elapsed.
+
+    $ time redis-cli --eval similarity_ranking.lua {pivot} {result} , {rank}
+
+* `pivot`: key of ranking pivot value.  ex. `bucket_item_{n}`
+* `result`: key to store ranking result.
+* `rank`: count of ranking to store.
+
+Example:
+
+    $ time redis-cli --eval similarity_ranking.lua  bucket_item_0 result , 100
+
+## Hands on
+
+Try to type this on your console:
+
+    $ redis-cli --eval setup_items.lua 64 1000000
+    $ redis-cli --eval choose_targets.lua 0 100000
+    $ time redis-cli --eval similarity_ranking.lua bucket_item_0 result , 100

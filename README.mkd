@@ -1,7 +1,11 @@
 # Abstract
 
 Redis + Lua を使って、アイテム類似度の高いものを上位からリストアップする、
-コンセプトスクリプトと関連ツールです。
+コンセプトスクリプトと関連ツール(ベンチマーク)です。
 
   * ranker-lua/       コンセプトスクリプト
-  * benchmark-java/   ベンチマークツール
+  * benchmark-java/   ベンチマークツール(試作)
+  * benchmark-lua/    ベンチマークツール
+
+まずは `benchmark-lua/README.mkd` の **Hand on** にしたがってベンチマークを実行
+してみてください。
