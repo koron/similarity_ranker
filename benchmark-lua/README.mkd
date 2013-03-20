@@ -2,37 +2,37 @@
 
 ## Setup items
 
-    $ redis-cli --eval setup_items.lua {item size} {item number}
+    $ redis-cli --eval setup_items.lua , {item size} {item number}
 
 * `item size`: length in bytes of item value.
 * `item number`: item number to create.
 
 Example:
 
-    $ redis-cli --eval setup_items.lua 64 1000000
+    $ redis-cli --eval setup_items.lua , 64 1000000
 
 ## Choose targets
 
-    $ redis-cli --eval choose_targets.lua {start} {count}
+    $ redis-cli --eval choose_targets.lua , {start} {count}
 
 * `start`: start number of targets.
 * `count`: count of targets.
 
 Example:
 
-    $ redis-cli --eval choose_targets.lua 0 100000
+    $ redis-cli --eval choose_targets.lua , 0 100000
 
 ## Run similarity ranking and measure elapsed.
 
     $ time redis-cli --eval similarity_ranking.lua {pivot} {result} , {rank}
 
-* `pivot`: key of ranking pivot value.  ex. `bucket_item_{n}`
+* `pivot`: key of ranking pivot value.  ex. `bench_item_{n}`
 * `result`: key to store ranking result.
 * `rank`: count of ranking to store.
 
 Example:
 
-    $ time redis-cli --eval similarity_ranking.lua  bucket_item_0 result , 100
+    $ time redis-cli --eval similarity_ranking.lua bench_item_0 result , 100
 
 ## Hands on
 
@@ -40,4 +40,53 @@ Try to type this on your console:
 
     $ redis-cli --eval setup_items.lua 64 1000000
     $ redis-cli --eval choose_targets.lua 0 100000
-    $ time redis-cli --eval similarity_ranking.lua bucket_item_0 result , 100
+    $ time redis-cli --eval similarity_ranking.lua bench_item_0 result , 100
+
+## Reference benchmark
+
+### Spec
+
+hw.model: Intel(R) Core(TM)2 CPU          6600  @ 2.40GHz
+hw.physmem: 2104524800
+
+### setup\_items.lua
+
+    $ time redis-cli --eval setup_items.lua 64 {number}
+
+size|number|time(sec)|SIZE|RSS
+----|------|---------|----|----
+64  |100K  |4.27     |28M |19M
+64  |400K  |17.22    |88M |69M
+64  |700K  |30.??    |126M|115M
+64  |1000K |42.83    |174M|162M
+
+### choose\_targets.lua
+
+1000K(=1M) items have been setup.
+
+    $ time redis-cli --eval choose_targets.lua , 0 {number}
+
+number|time(sec)
+------|---------
+100K  |0.51
+200K  |1.05
+300K  |1.58
+400K  |2.12
+500K  |2.52
+
+### similarity\_ranking.lua
+
+    $ time redis-cli --eval choose_targets.lua , 0 {choose}
+    $ time redis-cli --eval similarity_ranking.lua bench_item_0 result , {rank}
+
+choose|rank|time (sec)
+------|----|----------
+100K  |100 |2.50
+100K  |200 |2.52
+100K  |300 |2.52
+200K  |100 |5.02
+200K  |200 |5.04
+200K  |300 |5.05
+300K  |100 |7.55
+300K  |200 |7.57
+300K  |300 |7.57

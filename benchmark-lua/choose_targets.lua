@@ -7,7 +7,7 @@ local function generate_key(n)
 end
 
 local function choose_targets(start, count)
-    redis.call('DELETE', KEYS_KEY)
+    redis.call('DEL', KEYS_KEY)
     local last = start + count - 1
     for i = start, last do
         local key = generate_key(i)
